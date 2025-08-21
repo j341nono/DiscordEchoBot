@@ -4,6 +4,7 @@ RUN pip install uv
 
 RUN apt-get update && apt-get install -y \
     git build-essential cmake python3 python3-pip wget curl \
+    libcurl4-openssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN git clone https://github.com/ggerganov/llama.cpp.git && \
