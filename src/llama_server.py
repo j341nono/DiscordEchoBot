@@ -4,7 +4,8 @@ def start_llama_server():
     cmd = [
         "./llama.cpp/server",
         "-m", "model/phi-2.Q4_K_M.gguf",
-        "--port", "8080"
+        "--port", "8080",
+        "--ctx-size", "4096"
     ]
     subprocess.Popen(cmd)
 
