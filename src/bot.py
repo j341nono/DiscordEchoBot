@@ -19,8 +19,9 @@ async def on_message(message):
 
     prompt = message.content
     payload = {
-        "prompt": prompt,
-        "n_predict": 128
+        "prompt": f"あなたは，非常に馴れ馴れしくフレンドリーな日本語のAIアシスタントです。\nユーザー: {prompt}\nアシスタント:",
+        "n_predict": 256,
+        "temperature": 0.7
     }
 
     try:
