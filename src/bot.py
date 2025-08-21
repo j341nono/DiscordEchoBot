@@ -9,6 +9,7 @@ if TOKEN is None:
 LLAMA_API = "http://localhost:8080/completion"
 
 intents = discord.Intents.default()
+intents.members = True
 intents.message_content = True
 client = discord.Client(intents=intents)
 
