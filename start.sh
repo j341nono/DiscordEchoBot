@@ -1,0 +1,5 @@
+#!/bin/bash
+mkdir -p model
+cd model
+
+wget https://huggingface.co/unsloth/gemma-3-4b-it-GGUF/resolve/main/gemma-3-4b-it.Q4_K_M.gguf
