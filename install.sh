@@ -72,7 +72,6 @@ setup_llama_cpp() {
     
     cd llama.cpp
     
-    # 既存のビルドディレクトリをクリア
     if [ -d "build" ]; then
         log_info "既存のビルドディレクトリをクリア中..."
         rm -rf build
@@ -82,7 +81,7 @@ setup_llama_cpp() {
     cd build
     
     log_info "CUDA対応でCMakeを実行中..."
-    cmake .. -DGGML_CUDA=ON -DCMAKE_BUILD_TYPE=Release
+    cmake .. -DGGML_CUDA=ON -DCMAKE_BUILD_TYPE=Release -DLLAMA_CURL=OFF
     
     log_info "コンパイル中（時間がかかる場合があります）..."
     make -j$(nproc)
@@ -98,7 +97,7 @@ setup_llama_cpp() {
 }
 
 install_python_dependencies() {
-    uv pip install -r requirements.txt
+    uv pip install -r src/requirements.txt
 }
 
 setup_model_directory() {
@@ -124,11 +123,7 @@ main() {
     setup_llama_cpp
     install_python_dependencies
     setup_model_directory
-    setup_source_directory
-    create_start_script
 
-    chmod +x start.sh
-    
     echo ""
     echo "============================================"
     log_info "セットアップが完了しました！"
