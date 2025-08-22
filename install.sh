@@ -50,7 +50,7 @@ check_requirements() {
 
     # uv チェック
     if ! command -v uv &> /dev/null; then
-        log_error "uv が見つかりません。uvをインストールしてください: curl -LsSf https://astral.sh/uv/install.sh | sh"
+        log_error "uv が見つかりません。uvをインストールしてください"
         exit 1
     fi
 
@@ -97,7 +97,7 @@ setup_llama_cpp() {
 }
 
 install_python_dependencies() {
-    uv pip install -r src/requirements.txt
+    uv sync
 }
 
 setup_model_directory() {

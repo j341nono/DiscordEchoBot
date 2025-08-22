@@ -6,12 +6,10 @@ TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
 if TOKEN is None:
     raise RuntimeError("環境変数 DISCORD_BOT_TOKEN が設定されていません！")
 
-LLAMA_API = "http://localhost:8080/completion"
+LLAMA_API = "http://127.0.0.1:8080/completion"
 
 intents = discord.Intents.default()
-intents.members = True
 intents.message_content = True
-
 client = discord.Client(intents=intents)
 
 @client.event
@@ -24,48 +22,45 @@ async def on_message(message):
         return
     
     if client.user in message.mentions:
-        content = message.clean_content
-        prompt = content.replace(f"@{client.user.name}", "").strip()
+        user_input = message.clean_content.replace(f"@{client.user.name}", "").strip()
         
-        if not prompt:
+        if not user_input:
+            await message.channel.send("呼びましたか？何かお話ししましょう！")
             return
         
-        # 修正されたペイロード
+        # 毎回このプロンプトでリセットされるので、会話の文脈は引き継ぎません
+        prompt = f"あなたはフレンドリーな日本語のAIアシスタントです。次に示すユーザーの問いかけに対して、適切な返しをおこなってください。\nユーザー: {user_input}\nアシスタント:"
+        
+        # APIリクエストのペイロード
         payload = {
-            "prompt": f"あなたは非常に馴れ馴れしくフレンドリーな日本語のAIアシスタントです。\nユーザー: {prompt}\nアシスタント:",
-            "max_tokens": 256,  # n_predict から max_tokens に変更
-            "temperature": 0.7
+            "prompt": prompt,
+            "max_tokens": 256,
+            "temperature": 0.7,
+            "repeat_penalty": 1.1,
+            "stop": ["ユーザー:", "\n"]
         }
         
-        try:
-            response = requests.post(LLAMA_API, json=payload, timeout=60)
-            response.raise_for_status()  # HTTPエラーをチェック
-            data = response.json()
-            
-            print(f"API Response: {data}")  # デバッグ用
-            
-            # 修正されたレスポンス解析
-            if "content" in data:
-                if isinstance(data["content"], str):
-                    # 新しい形式: contentが直接文字列
-                    text = data["content"].strip()
-                elif isinstance(data["content"], list):
-                    # 古い形式: contentがリスト
-                    text = "".join([c.get("text", "") for c in data["content"]])
-                else:
-                    text = str(data["content"])
-            else:
-                text = "(No response from model)"
-            
-            # 空のレスポンスをチェック
-            if not text or text.strip() == "":
-                text = "(Empty response from model)"
-            
-            await message.channel.send(text)
-            
-        except requests.exceptions.RequestException as e:
-            await message.channel.send(f"Request Error: {e}")
-        except Exception as e:
-            await message.channel.send(f"Error: {e}")
+        async with message.channel.typing():
+            try:
+                # AIモデルにリクエストを送信
+                response = requests.post(LLAMA_API, json=payload, timeout=90)
+                response.raise_for_status()
+                
+                data = response.json()
+                ai_response = data.get("content", "").strip()
+                
+                if not ai_response:
+                    ai_response = "うーん、うまく言葉が出てきません…。"
+                
+                await message.channel.send(ai_response)
 
+            except requests.exceptions.ConnectionError:
+                # このエラーが最も重要です
+                await message.channel.send("ごめんなさい、AIサーバーに接続できませんでした。サーバーが起動しているか確認してください。")
+            except requests.exceptions.RequestException as e:
+                await message.channel.send(f"リクエスト中にエラーが発生しました: `{e}`")
+            except Exception as e:
+                await message.channel.send(f"予期せぬエラーが発生しました: `{e}`")
+
+# ボットの実行
 client.run(TOKEN)
