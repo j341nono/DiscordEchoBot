@@ -2,4 +2,4 @@
 mkdir -p model
 cd model
 
-wget https://huggingface.co/afrideva/japanese-mistral-300m-instruction-GGUF/resolve/main/japanese-mistral-300m-instruction.q8_0.gguf
+wget https://huggingface.co/mmnga/gemma-7b-it-gguf/resolve/main/gemma-7b-it-q4_0.gguf

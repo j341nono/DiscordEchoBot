@@ -3,7 +3,7 @@ import subprocess
 def start_llama_server():
     cmd = [
         "./llama.cpp/server",
-        "-m", "model/phi-2.Q4_K_M.gguf",
+        "-m", "model/gemma-7b-it-q4_0.gguf",
         "--port", "8080",
         "--ctx-size", "4096"
     ]
