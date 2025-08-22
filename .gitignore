@@ -2,3 +2,5 @@
 __pycache__/
 model/*
 !model/download.sh
+llama.cpp/
+
