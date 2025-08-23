@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+model/*
+!model/download.sh
+llama.cpp/
+llama_server.py.bak
+Dockerfile
+src/test_connection.py
