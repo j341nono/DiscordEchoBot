@@ -6,7 +6,7 @@ TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
 if TOKEN is None:
     raise RuntimeError("環境変数 DISCORD_BOT_TOKEN が設定されていません！")
 
-LLAMA_API = "http://127.0.0.1:8080/completion"
+LLAMA_API = "http://127.0.0.1:8081/completion"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -28,16 +28,17 @@ async def on_message(message):
             await message.channel.send("呼びましたか？何かお話ししましょう！")
             return
         
-        # 毎回このプロンプトでリセットされるので、会話の文脈は引き継ぎません
-        prompt = f"あなたはフレンドリーな日本語のAIアシスタントです。次に示すユーザーの問いかけに対して、適切な返しをおこなってください。\nユーザー: {user_input}\nアシスタント:"
+        prompt = "<|im_start|>system\nあなたは日本語のカウンセラーです。以下のユーザーの入力分に対して、適切な返事をしてください。<|im_end|>"
+        prompt += f"<|im_start|>user\n{user_input}<|im_end|>"
+        prompt += "<|im_start|>assistan\n"
         
         # APIリクエストのペイロード
         payload = {
             "prompt": prompt,
-            "max_tokens": 256,
+            "max_tokens": 128,
             "temperature": 0.7,
             "repeat_penalty": 1.1,
-            "stop": ["ユーザー:", "\n"]
+            "stop": ["<|im_end|>"]
         }
         
         async with message.channel.typing():
@@ -55,12 +56,13 @@ async def on_message(message):
                 await message.channel.send(ai_response)
 
             except requests.exceptions.ConnectionError:
-                # このエラーが最も重要です
-                await message.channel.send("ごめんなさい、AIサーバーに接続できませんでした。サーバーが起動しているか確認してください。")
-            except requests.exceptions.RequestException as e:
-                await message.channel.send(f"リクエスト中にエラーが発生しました: `{e}`")
-            except Exception as e:
-                await message.channel.send(f"予期せぬエラーが発生しました: `{e}`")
+                await message.channel.send("⚠️ AIサーバーに接続できませんでした。サーバーが起動しているか確認してください。")
+            except requests.exceptions.Timeout:
+                await message.channel.send("⚠️ 応答がタイムアウトしました。しばらくしてからもう一度試してください。")
+            except requests.exceptions.RequestException:
+                await message.channel.send("⚠️ リクエスト中にエラーが発生しました。サーバーの状態を確認してください。")
+            except Exception:
+                await message.channel.send("⚠️ 予期せぬエラーが発生しました。管理者に確認してください。")
 
-# ボットの実行
+
 client.run(TOKEN)

@@ -1,20 +1,21 @@
 import subprocess
 import time
 import sys
+import os
 
 def start_llama_server():
     cmd = [
         "./llama.cpp/build/bin/llama-server",
-        "-m", "model/gemma-7b-it-q4_0.gguf",
-        "--port", "8080",
+        "-m", "model/gemma-7b-it-q8_0.gguf",
+        "--port", "8081",
         "--host", "0.0.0.0",  # 外部からのアクセスを許可
-        "--ctx-size", "4096",
+        "--ctx-size", "128",
         "--gpu-layers", "32"
     ]
     
     print("Starting llama server...")
     print(f"Command: {' '.join(cmd)}")
-    
+
     try:
         process = subprocess.Popen(cmd)
         print(f"Llama server started with PID: {process.pid}")

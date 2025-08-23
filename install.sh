@@ -108,7 +108,7 @@ setup_model_directory() {
     
     mkdir -p model
     cd model
-    wget https://huggingface.co/mmnga/gemma-7b-it-gguf/resolve/main/gemma-7b-it-q4_0.gguf
+    wget https://huggingface.co/mmnga/gemma-7b-it-gguf/resolve/main/gemma-7b-it-q8_0.gguf
     cd ..
 
     fi
