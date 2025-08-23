@@ -1,49 +1,49 @@
-# Dicord-Echo-Bot
+# Discord-Echo-Bot
 
-Dicord上で使用可能な対話Botです．
+[日本語版はこちら / Japanese Version](README.ja.md)
 
-Huggingface の mmnga/gemma-7b-it-q8_0.gguf のモデルを使用します．日本語と英語に対応しています．
+A conversational bot for use on Discord.
 
-# セットアップ
+This bot uses the mmnga/gemma-7b-it-q8_0.gguf model from Hugging Face. It supports both Japanese and English.
+
+## Setup
 
 ```bash
 ./install.sh
 ```
 
-(Discord Developer Portal)[https://discord.com/developers/]にアクセスし，あなたのアプリケーションを選択します．
+Access the [Discord Developer Portal](https://discord.com/developers/) and select your application.
 
-1. 特権ゲートウェイインテントの有効化
+### 1. Enable Privileged Gateway Intents
 
-左側のメニューから 「Bot」 タブを開きます．
+Open the "Bot" tab from the left menu.
 
-「MESSAGE CONTENT INTENT」 のスイッチをオンにしてください。
+Turn on the "MESSAGE CONTENT INTENT" switch.
 
-2. ボットの招待URL生成と権限設定
+### 2. Generate Bot Invitation URL and Set Permissions
 
-ボットをあなたのサーバーに招待するためのURLを生成します。
+Generate a URL to invite the bot to your server.
 
-左側のメニューから 「OAuth2」 > 「URL Generator」 を選択します．
+Select "OAuth2" > "URL Generator" from the left menu.
 
-「SCOPES」 で bot にチェックを入れます．
+Check "bot" in "SCOPES".
 
-下に表示される 「BOT PERMISSIONS」 で，以下の権限にチェックを入れてください．
+In the "BOT PERMISSIONS" displayed below, check the following permissions:
 
-チャンネルを見る (View Channels)
+- View Channels
+- Send Messages
+- Read Message History
 
-メッセージを送信 (Send Messages)
+Copy the generated URL and access it in your browser to add the bot to your server.
 
-メッセージ履歴を読む (Read Message History)
-
-生成されたURLをコピーし，ブラウザでアクセスしてボットをサーバーに追加します．
-
-# 実行
+## Usage
 
 ```bash
 ./start.sh
 ```
 
-# 今後の拡張性
+## Future Enhancements
 
-- ストリーミング出力を実装する．
-- 過去のチャット履歴を使用できるようにする
-    - 特定の文字数以上になったら，古い履歴を順に削除するようにしたい
+- Implement streaming output
+- Enable the use of past chat history
+- Implement automatic deletion of old history when exceeding a certain character count
