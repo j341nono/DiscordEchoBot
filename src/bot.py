@@ -1,12 +1,15 @@
 import discord
 import requests
 import os
+from transformers import AutoTokenizer
 
 TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
 if TOKEN is None:
     raise RuntimeError("環境変数 DISCORD_BOT_TOKEN が設定されていません！")
 
 LLAMA_API = "http://127.0.0.1:8081/completion"
+model_path = "model/gemma-7b-it-q8_0.gguf"
+
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -28,9 +31,18 @@ async def on_message(message):
             await message.channel.send("呼びましたか？何かお話ししましょう！")
             return
         
-        prompt = "<|im_start|>system\nあなたは日本語のカウンセラーです。以下のユーザーの入力分に対して、適切な返事をしてください。<|im_end|>"
-        prompt += f"<|im_start|>user\n{user_input}<|im_end|>"
-        prompt += "<|im_start|>assistan\n"
+        tokenizer = AutoTokenizer.from_pretrained("google/gemma-7b-it")
+
+        chat = [
+            # { "role": "system", "content": "あなたは日本語のカウンセラーです。以下のユーザーの入力分に対して、適切な返事をしてください。" },
+            { "role": "user", "content": {user_input} },
+        ]
+        prompt = tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True)
+
+
+        # prompt = "<|im_start|>system\nあなたは日本語のカウンセラーです。以下のユーザーの入力分に対して、適切な返事をしてください。<|im_end|>"
+        # prompt += f"<|im_start|>user\n{user_input}<|im_end|>"
+        # prompt += "<|im_start|>assistan\n"
         
         # APIリクエストのペイロード
         payload = {
